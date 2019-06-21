@@ -1,0 +1,57 @@
+plugins {
+    id 'java'
+//    id 'war'
+}
+
+group 'com.moneybee'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    def springVersion = '5.1.6.RELEASE'
+    def tomcatVersion = '8.5.40'
+
+    /* Spring Core */
+    compile "org.springframework:spring-core:${springVersion}"
+    compile "org.springframework:spring-context:${springVersion}"
+    compile "org.springframework:spring-beans:${springVersion}"
+
+    /* Spring MVC (as I understood includes web, webmvc, core, context, beans packages)*/
+    compile "org.springframework:spring-webmvc:${springVersion}"
+
+    /* Swagger */
+//    compile 'io.springfox:springfox-swagger2:2.9.2',
+//            'io.springfox:springfox-swagger-ui:2.9.2'
+
+    /* Apache Tomcat */
+    compile "org.apache.tomcat.embed:tomcat-embed-core:${tomcatVersion}"
+    compile "org.apache.tomcat.embed:tomcat-embed-jasper:${tomcatVersion}"
+    compile "org.apache.tomcat.embed:tomcat-embed-el:${tomcatVersion}"
+//    compile "org.apache.tomcat.embed:tomcat-embed-logging-log4j:8.0.53"
+    compile "org.apache.tomcat:tomcat-annotations-api:${tomcatVersion}"
+
+    /* JSP */
+    compile "javax.servlet.jsp.jstl:jstl-api:1.2"
+    compile "taglibs:standard:1.1.2"
+
+    /* Hibernate + DB */
+    compile "org.hibernate:hibernate-core:5.3.10.Final"
+    compile "org.springframework:spring-orm:${springVersion}"
+//    compile "org.javassist:javassist:3.25.0-GA"
+    runtime "mysql:mysql-connector-java:8.0.16"
+    compile "org.apache.tomcat:tomcat-dbcp:${tomcatVersion}"
+    compile "org.hibernate:hibernate-validator:5.4.3.Final"
+
+    /* Lombok */
+    compileOnly('org.projectlombok:lombok:+')
+
+    /* Unit tests */
+//    testCompile group: 'junit', name: 'junit', version: '4.12'
+//    testCompile 'org.powermock:powermock-module-junit4:1.6.5'
+//    testCompile 'org.powermock:powermock-api-mockito:1.6.5'
+}
