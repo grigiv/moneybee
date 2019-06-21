@@ -1,10 +1,17 @@
-plugins {
-    id 'java'
-//    id 'war'
-}
+//plugins {
+//    id 'java'
+////    id 'war'
+//}
+apply plugin: 'war'
+apply plugin: 'com.bmuschko.tomcat'
+apply plugin: 'java'
+apply plugin: 'application'
+apply plugin: 'com.github.johnrengelman.shadow'
 
 group 'com.moneybee'
 version '1.0-SNAPSHOT'
+
+mainClassName = 'com.moneybee.Application'
 
 sourceCompatibility = 1.8
 
@@ -14,7 +21,7 @@ repositories {
 
 dependencies {
     def springVersion = '5.1.6.RELEASE'
-    def tomcatVersion = '8.5.40'
+    def tomcatVersion = '8.5.16'
 
     /* Spring Core */
     compile "org.springframework:spring-core:${springVersion}"
@@ -29,11 +36,11 @@ dependencies {
 //            'io.springfox:springfox-swagger-ui:2.9.2'
 
     /* Apache Tomcat */
-    compile "org.apache.tomcat.embed:tomcat-embed-core:${tomcatVersion}"
-    compile "org.apache.tomcat.embed:tomcat-embed-jasper:${tomcatVersion}"
-    compile "org.apache.tomcat.embed:tomcat-embed-el:${tomcatVersion}"
+    tomcat "org.apache.tomcat.embed:tomcat-embed-core:${tomcatVersion}"
+    tomcat "org.apache.tomcat.embed:tomcat-embed-jasper:${tomcatVersion}"
+    tomcat "org.apache.tomcat.embed:tomcat-embed-el:${tomcatVersion}"
 //    compile "org.apache.tomcat.embed:tomcat-embed-logging-log4j:8.0.53"
-    compile "org.apache.tomcat:tomcat-annotations-api:${tomcatVersion}"
+    tomcat "org.apache.tomcat:tomcat-annotations-api:${tomcatVersion}"
 
     /* JSP */
     compile "javax.servlet.jsp.jstl:jstl-api:1.2"
@@ -44,8 +51,15 @@ dependencies {
     compile "org.springframework:spring-orm:${springVersion}"
 //    compile "org.javassist:javassist:3.25.0-GA"
     runtime "mysql:mysql-connector-java:8.0.16"
-    compile "org.apache.tomcat:tomcat-dbcp:${tomcatVersion}"
+    tomcat "org.apache.tomcat:tomcat-dbcp:${tomcatVersion}"
     compile "org.hibernate:hibernate-validator:5.4.3.Final"
+//
+    compile "org.apache.tomcat.embed:tomcat-embed-core:${tomcatVersion}"
+    compile "org.apache.tomcat.embed:tomcat-embed-jasper:${tomcatVersion}"
+    compile "org.apache.tomcat.embed:tomcat-embed-el:${tomcatVersion}"
+//    compile "org.apache.tomcat.embed:tomcat-embed-logging-log4j:8.0.53"
+    compile "org.apache.tomcat:tomcat-annotations-api:${tomcatVersion}"
+    compile "org.apache.tomcat:tomcat-dbcp:${tomcatVersion}"
 
     /* Lombok */
     compileOnly('org.projectlombok:lombok:+')
@@ -55,3 +69,58 @@ dependencies {
 //    testCompile 'org.powermock:powermock-module-junit4:1.6.5'
 //    testCompile 'org.powermock:powermock-api-mockito:1.6.5'
 }
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+
+    dependencies {
+        classpath 'com.bmuschko:gradle-tomcat-plugin:2.5'
+    }
+}
+
+tomcat {
+    httpProtocol = 'org.apache.coyote.http11.Http11Nio2Protocol'
+    ajpProtocol  = 'org.apache.coyote.ajp.AjpNio2Protocol'
+}
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.github.jengelman.gradle.plugins:shadow:2.0.1'
+    }
+}
+
+shadowJar {
+    mergeServiceFiles()
+    processResources {
+        from('src/main/webapp') {
+            include '**/*.css'
+            include '**/*.images'
+            include '**/*.js'
+            include '**/*.jsp'
+        }
+        into("WEB-INF")
+    }
+}
+
+repositories {
+    jcenter()
+    maven {
+        url 'http://repo.spring.io/milestone/'
+    }
+}
+
+dependencies {
+    compile('org.apache.tomcat.embed:tomcat-embed-jasper:8.0.47')
+    compile('org.springframework:spring-webmvc:5.0.1.RELEASE')
+    compile('com.fasterxml.jackson.core:jackson-databind:2.9.2')
+    compile('org.springframework.security:spring-security-config:5.0.0.RC1')
+    compile('org.springframework.security:spring-security-web:5.0.0.RC1')
+    compile('jstl:jstl:1.2')
+    compile('org.slf4j:slf4j-jdk14:1.7.25')
+}
+
